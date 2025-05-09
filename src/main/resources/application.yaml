@@ -1,0 +1,39 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /nettruyen
+
+spring:
+  threads:
+    virtual:
+      enabled: true
+  datasource:
+    url: ${DBMS_URL:jdbc:mysql://localhost:3306/comic}
+    username: ${DBMS_USERNAME:root}
+    password: ${DBMS_PASSWORD:root}
+    driverClassName: com.mysql.cj.jdbc.Driver
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 10
+      idle-timeout: 30000
+      connection-timeout: 30000
+      max-lifetime: 600000
+      pool-name: HikariCP
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+
+outbound:
+  identity:
+    client-id: ${CLIENT_ID}
+    client-secret: ${CLIENT_SECRET}
+    redirect-uri: "http://localhost:3000/authentication"
+
+
+jwt:
+  signerKey: ${SIGNER_KEY}
+  valid-duration: 600 # Thgian hiệu lực của token (in second)
+  refreshable-duration: 3600 # Thgian có hiệu lực của refresh token
