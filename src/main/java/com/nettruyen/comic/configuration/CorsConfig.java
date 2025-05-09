@@ -11,10 +11,10 @@ public class CorsConfig {
     @Bean
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.addAllowedOrigin("http://localhost:3000"); // Cho phép React domain
-        corsConfiguration.addAllowedMethod("*"); // Cho phép tất cả các phương thức
-        corsConfiguration.addAllowedHeader("*"); // Cho phép tất cả header
-        corsConfiguration.setAllowCredentials(true); // Nếu cần cookie, đặt true
+        corsConfiguration.addAllowedOrigin("http://localhost:3000");
+        corsConfiguration.addAllowedMethod("*");
+        corsConfiguration.addAllowedHeader("*");
+        corsConfiguration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfiguration);
