@@ -24,4 +24,6 @@ public interface IStoryService {
     Page<StoryResponse> getAllStory(int pageNo, int pageSize);
 
     int countChapterByStoryCode(String storyCode);
+
+    List<StoryResponse> getAllStoryByGenerateCode(String generatesCode);
 }

@@ -37,6 +37,14 @@ public class StoryController {
                 .build();
     }
 
+    @GetMapping("/api/story")
+    ApiResponse<List<StoryResponse>> getAllStory() {
+        return ApiResponse.<List<StoryResponse>>builder()
+                .code(200)
+                .result(storyService.getAllStory())
+                .build();
+    }
+
     @PutMapping("/api/story")
     ApiResponse<StoryResponse> updateStory(@RequestBody @Valid StoryUpdateRequest storyUpdateRequest) {
         return ApiResponse.<StoryResponse>builder()
@@ -97,6 +105,26 @@ public class StoryController {
         return ApiResponse.<Map<String, Object>>builder()
                 .code(200)
                 .result(response)
+                .build();
+    }
+
+    // Tìm kiếm theo code truyện
+    @GetMapping("/api/story/search")
+    ApiResponse<List<StoryResponse>> getStoryByCode(@RequestParam("code") String code) {
+        return ApiResponse.<List<StoryResponse>>builder()
+                .code(200)
+                .result(storyService.getAllStoryByGenerateCode(code))
+                .message("Get completed")
+                .build();
+    }
+
+    // Tìm kiếm theo thể loại
+    @GetMapping("/api/stories/search")
+    ApiResponse<List<StoryResponse>> getAllStoryByGenerate(@RequestParam("code") String code) {
+        return ApiResponse.<List<StoryResponse>>builder()
+                .code(200)
+                .result(storyService.getAllStoryByGenerateCode(code))
+                .message("Get completed")
                 .build();
     }
 
