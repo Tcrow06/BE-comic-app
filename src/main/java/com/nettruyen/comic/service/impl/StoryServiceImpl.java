@@ -25,10 +25,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -211,11 +208,6 @@ public class StoryServiceImpl implements IStoryService {
                             .map(GenerateEntity::getName)
                             .collect(Collectors.toSet()));
 
-                    // Map chapter (Get number only)
-//                    storyResponse.setChapters(story.getChapters().stream()
-//                            .map(chapterEntity -> ConvertorUtil.convertToChapterComponentResponse(chapterEntity))
-//                            .collect(Collectors.toSet()));
-
                     return storyResponse;
 
                 }).toList();
@@ -277,5 +269,24 @@ public class StoryServiceImpl implements IStoryService {
             log.error(e.getMessage());
         }
         return 0;
+    }
+
+    @Override
+    public List<StoryResponse> getAllStoryByGenerateCode(String generatesCode) {
+
+        List<String> genes = new ArrayList<>();
+        genes.add(generatesCode);
+
+        List<StoryEntity> storyEntities = storyRepository.findAllByGeneratesCode(genes);
+        if (storyEntities == null) throw new AppException(ErrorCode.GENERATE_NOT_EXITS);
+
+        return storyEntities.stream().map(story -> {
+            StoryResponse storyResponse = storyMapper.toResponse(story);
+            storyResponse.setGenerates(story.getGenerates().stream()
+                    .map(GenerateEntity::getName)
+                    .collect(Collectors.toSet()));
+
+            return storyResponse;
+        }).toList();
     }
 }

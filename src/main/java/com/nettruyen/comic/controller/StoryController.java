@@ -100,4 +100,14 @@ public class StoryController {
                 .build();
     }
 
+    // Tìm kiếm theo thể loại
+    @GetMapping("/api/stories/search")
+    ApiResponse<List<StoryResponse>> getAllStoryByGenerate(@RequestParam("code") String code) {
+        return ApiResponse.<List<StoryResponse>>builder()
+                .code(200)
+                .result(storyService.getAllStoryByGenerateCode(code))
+                .message("Get completed")
+                .build();
+    }
+
 }
