@@ -45,7 +45,7 @@ public class UserController {
                 .build();
     }
 
-    @GetMapping("/api/admin/user/{id}")
+    @GetMapping("/api/user/{id}")
     ApiResponse<UserResponse> getUserById(@PathVariable("id") String id) {
         return ApiResponse.<UserResponse>builder()
                 .code(200)
@@ -58,6 +58,15 @@ public class UserController {
         return ApiResponse.<UserResponse>builder()
                 .code(200)
                 .result(userService.getMyInfo())
+                .build();
+    }
+
+    @GetMapping("/api/user")
+    ApiResponse<UserResponse> getUserByUsername(@RequestParam String username) {
+        return ApiResponse.<UserResponse>builder()
+                .code(200)
+                .message("Get user completed")
+                .result(userService.findUserByUsername(username))
                 .build();
     }
 }
