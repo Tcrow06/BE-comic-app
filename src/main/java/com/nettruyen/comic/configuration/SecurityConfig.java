@@ -34,6 +34,8 @@ public class SecurityConfig {
             "/api/chapter/**",
             "/api/comment/**",
             "/api/comments/**",
+            "/api/user/**",
+            "/api/favorite/**",
             "/api/admin/scraper",
     };
 

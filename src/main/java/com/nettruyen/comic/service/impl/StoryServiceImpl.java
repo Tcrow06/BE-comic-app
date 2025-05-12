@@ -11,8 +11,10 @@ import com.nettruyen.comic.exception.AppException;
 import com.nettruyen.comic.exception.ErrorCode;
 import com.nettruyen.comic.mapper.StoryMapper;
 import com.nettruyen.comic.repository.internal.IChapterRepository;
+import com.nettruyen.comic.repository.internal.IFavoriteRepository;
 import com.nettruyen.comic.repository.internal.IGenerateRepository;
 import com.nettruyen.comic.repository.internal.IStoryRepository;
+import com.nettruyen.comic.service.IFavoriteService;
 import com.nettruyen.comic.service.IStoryService;
 import com.nettruyen.comic.util.ConvertorUtil;
 import lombok.AccessLevel;
@@ -37,6 +39,7 @@ public class StoryServiceImpl implements IStoryService {
     IGenerateRepository generateRepository;
     IStoryRepository storyRepository;
     IChapterRepository chapterRepository;
+    IFavoriteRepository favoriteRepository;
     StoryMapper storyMapper;
 
 
