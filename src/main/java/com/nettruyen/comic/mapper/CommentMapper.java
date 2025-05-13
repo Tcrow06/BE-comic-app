@@ -9,9 +9,12 @@ import org.mapstruct.Mapping;
 @Mapper
 public interface CommentMapper {
 
-    @Mapping(target = "user", ignore = true)
-    @Mapping(target = "chapterId", ignore = true)
-    @Mapping(target = "parentId", ignore = true)
+    @Mapping(target = "username", ignore = true)
+    @Mapping(target = "storyId", ignore = true)
     @Mapping(target = "replies", ignore = true)
     CommentResponse toResponse(CommentEntity entity);
+
+    @Mapping(target = "user", ignore = true)
+    @Mapping(target = "story", ignore = true)
+    CommentEntity toEntity(CommentRequest request);
 }
