@@ -18,11 +18,9 @@ public class CommentResponse {
 
     String content;
 
-    UserResponse user;
+    String username;
 
-    String chapterId;
-
-    String parentId;    // Id của user bình luận cha
+    String storyId;
 
     int depth;
 

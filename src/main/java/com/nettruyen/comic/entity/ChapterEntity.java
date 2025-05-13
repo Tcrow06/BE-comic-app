@@ -33,6 +33,6 @@ public class ChapterEntity extends AbstractEntity {
     @JoinColumn(name = "story_id")
     StoryEntity story;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "chapter")
-    Set<CommentEntity> comments = new HashSet<>();
+//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "chapter")
+//    Set<CommentEntity> comments = new HashSet<>();
 }

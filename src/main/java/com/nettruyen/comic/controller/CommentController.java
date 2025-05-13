@@ -27,15 +27,15 @@ public class CommentController {
     ApiResponse<CommentResponse> createComment(@RequestBody CommentRequest request) {
         return ApiResponse.<CommentResponse>builder()
                 .code(200)
-                .result(commentService.createComment(request))
+                .result(commentService.addComment(request))
                 .build();
     }
 
-    @GetMapping("api/comments/{chapter-id}")
-    ApiResponse<List<CommentResponse>> getAllComments(@PathVariable("chapter-id") String chapterId) {
+    @GetMapping("api/comments/{story-id}")
+    ApiResponse<List<CommentResponse>> getAllComments(@PathVariable("story-id") String storyId) {
         return ApiResponse.<List<CommentResponse>>builder()
                 .code(200)
-                .result(commentService.getAllCommentForChapter(chapterId))
+                .result(commentService.getAllCommentsOfStory(storyId))
                 .build();
     }
 }

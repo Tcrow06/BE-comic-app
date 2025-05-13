@@ -12,14 +12,14 @@ import org.mapstruct.MappingTarget;
 public interface ChapterMapper {
 
     @Mapping(target = "story", ignore = true)
-    @Mapping(target = "comments", ignore = true)
+    // @Mapping(target = "comments", ignore = true)
     ChapterEntity toEntity(ChapterCreationRequest request);
 
     @Mapping(target = "story", ignore = true)
-    @Mapping(target = "comments", ignore = true)
+    // @Mapping(target = "comments", ignore = true)
     ChapterResponse toResponse(ChapterEntity entity);
 
     @Mapping(target = "story", ignore = true)
-    @Mapping(target = "comments", ignore = true)
+    // @Mapping(target = "comments", ignore = true)
     void updateEntity(@MappingTarget ChapterEntity entity, ChapterUpdateRequest request);
 }
