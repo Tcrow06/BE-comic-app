@@ -35,4 +35,6 @@ public class StoryResponse {
     Set<String> generates = new HashSet<>();
 
     List<ChapterComponentResponse> chapters = new ArrayList<>();
+
+    int totalChapter;
 }

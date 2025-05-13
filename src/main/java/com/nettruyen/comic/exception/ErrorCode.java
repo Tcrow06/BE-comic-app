@@ -21,6 +21,7 @@ public enum ErrorCode {
     PASSWORD_INVALID(1002, "Password must be at least 8 characters", HttpStatus.BAD_REQUEST),
     VALIDATION_INVALID(1111, "Key validation failed", HttpStatus.BAD_REQUEST),
     UNAUTHENTICATED(1003, "Unauthenticated", HttpStatus.UNAUTHORIZED),
+    PASSWORD_INCORRECT(1003, "Incorrect password", HttpStatus.BAD_REQUEST),
     UNAUTHORIZED(1004, "You do not have permission", HttpStatus.FORBIDDEN),
     USER_ALREADY_ACTIVE(1005, "User already active account", HttpStatus.BAD_REQUEST),
 
@@ -34,6 +35,7 @@ public enum ErrorCode {
     GENERATE_NOT_EXITS(1122, "Generate is not existed in your database.", HttpStatus.BAD_REQUEST),
 
     INVALID_EXPIRED_TOKEN(1005, "Token is invalid.", HttpStatus.BAD_REQUEST),
+    UNVERIFIED(1005, "You must verify your account.", HttpStatus.BAD_REQUEST),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode httpStatusCode) {

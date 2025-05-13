@@ -26,8 +26,6 @@ public class ChapterController {
     @GetMapping("/api/chapters")
     ApiResponse<Page<ChapterResponse>> getAllChapters(@RequestParam("pageNo") String pageNo,
                                                       @RequestParam("pageSize") String pageSize) {
-
-
         return ApiResponse.<Page<ChapterResponse>>builder()
                 .code(200)
                 .result(chapterService.getAllChapters(Integer.parseInt(pageNo), Integer.parseInt(pageSize)))
@@ -47,6 +45,21 @@ public class ChapterController {
         return ApiResponse.<ChapterResponse>builder()
                 .code(200)
                 .result(chapterService.getChapterByStoryCodeAndChapterNumber(storyCode, chapterNumberInt))
+                .build();
+    }
+    @GetMapping("/api/chapter_story_id")
+    ApiResponse<ChapterResponse> getChapterByChapterNumberAndStoryId(@RequestParam("story-id") String storyId,
+                                                           @RequestParam("chapter-number") String chapterNumber) {
+
+        // Cắt đi chữ chuong trong BE.
+        int chapterNumberInt = chapterNumber.contains("-")
+                ? Integer.parseInt(chapterNumber.split("-")[1])
+                : Integer.parseInt(chapterNumber);
+
+
+        return ApiResponse.<ChapterResponse>builder()
+                .code(200)
+                .result(chapterService.getChapterByChapterNumberAndStoryId(storyId, chapterNumberInt))
                 .build();
     }
 

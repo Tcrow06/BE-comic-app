@@ -25,7 +25,7 @@ public class ConvertorUtil {
                 .chapterNumber(chapterEntity.getChapterNumber())
                 .date(convertDate(chapterEntity.getCreatedAt().toString()))
                 .title(chapterEntity.getTitle())
-                .storyId(chapterEntity.getId())
+                .storyId(chapterEntity.getStory().getId())
                 .build();
     }
 
