@@ -30,7 +30,8 @@ public class SecurityConfig {
             "/api/generate/**",
             "/api/story/**",
             "/api/stories/**",
-            "/api/chapters/**",
+            "/api/chapter/**",
+            "/api/chapter_story_id/**",
             "/api/chapter/**",
             "/api/comment/**",
             "/api/comments/**",
@@ -50,6 +51,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINT).permitAll()
                         .requestMatchers(HttpMethod.GET, PUBLIC_ENDPOINT).permitAll()
                         .requestMatchers(HttpMethod.PUT, PUBLIC_ENDPOINT).permitAll()
+                        .requestMatchers(HttpMethod.GET,"/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         // .requestMatchers("/api/admin/**").hasRole(RoleEnum.ADMIN.name())
                         .anyRequest().authenticated()
                 )

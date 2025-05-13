@@ -5,7 +5,6 @@ import com.nettruyen.comic.dto.request.authentication.*;
 import com.nettruyen.comic.dto.response.authentication.AuthenticationResponse;
 import com.nettruyen.comic.dto.response.authentication.IntrospectResponse;
 import com.nettruyen.comic.dto.response.authentication.ResendOtpResponse;
-import com.nettruyen.comic.dto.response.user.OutboundUserResponse;
 import com.nettruyen.comic.dto.response.user.UserResponse;
 import com.nettruyen.comic.entity.InvalidatedToken;
 import com.nettruyen.comic.entity.RoleEntity;
@@ -13,13 +12,13 @@ import com.nettruyen.comic.entity.UserEntity;
 import com.nettruyen.comic.exception.AppException;
 import com.nettruyen.comic.exception.ErrorCode;
 import com.nettruyen.comic.mapper.UserMapper;
+import com.nettruyen.comic.repository.external.IOutboundIdentityClientRepository;
 import com.nettruyen.comic.repository.external.IOutboundUserClientRepository;
 import com.nettruyen.comic.repository.internal.IInvalidatedRepository;
-import com.nettruyen.comic.repository.external.IOutboundIdentityClientRepository;
 import com.nettruyen.comic.repository.internal.IRoleRepository;
 import com.nettruyen.comic.repository.internal.IUserRepository;
-import com.nettruyen.comic.service.IAuthenticationService;
 import com.nettruyen.comic.service.IAccountService;
+import com.nettruyen.comic.service.IAuthenticationService;
 import com.nettruyen.comic.service.ICloudinaryService;
 import com.nettruyen.comic.util.ConvertorUtil;
 import com.nettruyen.comic.util.OtpGenerator;
@@ -103,14 +102,15 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         if (user == null)
             throw new AppException(ErrorCode.USER_NOT_EXISTED);
 
-        boolean authenticated = passwordEncoder.matches(request.getPassword(), user.getPassword())
-                && user.getIsActive() == 1;
-        if (!authenticated)
-            throw new AppException(ErrorCode.UNAUTHENTICATED);
-
+        if(!passwordEncoder.matches(request.getPassword(), user.getPassword())){
+            throw new AppException(ErrorCode.PASSWORD_INCORRECT);
+        }
+        if(user.getIsActive()==0){
+            throw new AppException(ErrorCode.UNVERIFIED);
+        }
         // Generate token when authenticate success
         String token = generateToken(user);
-
+        String refreshToken = generateRefreshToken(user);
         // Tạo một authentication thủ công, do Spring Security không tự động cập nhật SecurityContextHolder
         List<GrantedAuthority> authorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getRoleName().name()))
@@ -130,8 +130,12 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 
         return AuthenticationResponse.builder()
                 .isActive((user.getIsActive() == null || user.getIsActive() == 0) ? 0 : 1)
-                .token(token)
+                .accessToken(token)
+                .refreshToken(refreshToken)
                 .message("Login successful with " + user.getUsername())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .picture(user.getPicture())
                 .build();
     }
 
@@ -321,8 +325,10 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         if (user == null) throw new AppException(ErrorCode.USER_NOT_EXISTED);
 
         var newToken = generateToken(user);
+        var newRefreshToken = generateRefreshToken(user);
         return AuthenticationResponse.builder()
-                .token(newToken)
+                .accessToken(newToken)
+                .refreshToken(newRefreshToken)
                 .isActive(user.getIsActive())
                 .message(user.getUsername())
                 .build();
@@ -372,7 +378,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
             var token = generateToken(user);
 
 
-            return AuthenticationResponse.builder().token(token).build();
+            return AuthenticationResponse.builder().accessToken(token).build();
 
         } catch (Exception e) {
             log.error("Error during token exchange: {}", e.getMessage());
@@ -391,9 +397,35 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         // Payload: Data contain in body - claim
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
                 .subject(userEntity.getUsername())
-                .issuer("Q.comic - Admin")
+                .issuer("TQ.comic - Admin")
                 .issueTime(new Date())
                 .expirationTime(Date.from(Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS)))
+                .claim("scope", buildScope(userEntity))
+                .jwtID(UUID.randomUUID().toString())    // Token id
+                .build();
+        Payload payload = new Payload(jwtClaimsSet.toJSONObject());
+        JWSObject jwsObject = new JWSObject(jwsHeader, payload);
+
+
+        try {
+            jwsObject.sign(new MACSigner(SIGNER_KEY.getBytes()));
+            return jwsObject.serialize();
+        } catch (JOSEException e) {
+            log.error(e.getMessage());
+            throw new AppException(ErrorCode.UNCATEGORIZED);
+        }
+    }
+    private String generateRefreshToken(UserEntity userEntity) {
+
+        // Header
+        JWSHeader jwsHeader = new JWSHeader(JWSAlgorithm.HS512);
+
+        // Payload: Data contain in body - claim
+        JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
+                .subject(userEntity.getUsername())
+                .issuer("TQ.comic - Admin")
+                .issueTime(new Date())
+                .expirationTime(Date.from(Instant.now().plus(REFRESHABLE_DURATION, ChronoUnit.SECONDS)))
                 .claim("scope", buildScope(userEntity))
                 .jwtID(UUID.randomUUID().toString())    // Token id
                 .build();

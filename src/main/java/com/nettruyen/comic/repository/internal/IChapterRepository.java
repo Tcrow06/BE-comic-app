@@ -18,10 +18,17 @@ public interface IChapterRepository extends JpaRepository<ChapterEntity, String>
 
     Page<ChapterEntity> findByStoryCode(String storyCode, Pageable pageable);
 
+    int countByStoryCode(String storyCode);
     @Query("SELECT c " +
             "FROM tbl_chapter c " +
             "WHERE c.story.code = :storyCode " +
             "AND c.chapterNumber = :chapterNumber")
     ChapterEntity findByStoryCodeAndChapterNumber(@Param("storyCode") String storyCode,
                                                 @Param("chapterNumber") Integer chapterNumber);
+    @Query("SELECT c " +
+            "FROM tbl_chapter c " +
+            "WHERE c.story.id = :storyId " +
+            "AND c.chapterNumber = :chapterNumber")
+    ChapterEntity findByStoryIdAndChapterNumber(@Param("storyId") String storyId,
+                                                  @Param("chapterNumber") Integer chapterNumber);
 }

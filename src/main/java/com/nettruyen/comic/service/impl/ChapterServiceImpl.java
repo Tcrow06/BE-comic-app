@@ -165,6 +165,31 @@ public class ChapterServiceImpl implements IChapterService {
         }
     }
 
+    @Override
+    public ChapterResponse getChapterByChapterNumberAndStoryId(String storyId, Integer chapterNumber) {
+        if (storyId == null || chapterNumber == null)
+            throw new AppException(ErrorCode.UNCATEGORIZED);
+
+        try {
+
+            ChapterEntity chapterExisted = chapterRepository.findByStoryIdAndChapterNumber(storyId, chapterNumber);
+            if (chapterExisted == null) throw new AppException(ErrorCode.CHAPTER_NOT_EXITS);
+
+            ChapterResponse result = chapterMapper.toResponse(chapterExisted);
+            var storyContainChapter = storyRepository.findById(chapterExisted.getStory().getId());
+            if (storyContainChapter.isPresent()) {
+                result.setStory(storyMapper.toResponse(storyContainChapter.get()));
+            } else {
+                result.setStory(null);
+            }
+
+            return result;
+
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new AppException(ErrorCode.UNCATEGORIZED);
+        }
+    }
     private int extractNumberFromChapterNumber(String chapterNumber) {
         String numberPart = chapterNumber.replaceAll("[^0-9]", ""); // Loại bỏ tất cả ký tự không phải số
         return Integer.parseInt(numberPart);

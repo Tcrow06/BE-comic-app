@@ -130,6 +130,7 @@ public class StoryServiceImpl implements IStoryService {
             result.setChapters(chapterPage.getContent().stream()
                     .map(ConvertorUtil::convertToChapterComponentResponse)
                     .collect(Collectors.toList()));
+            result.setTotalChapter(existedStory.getChapters().size());
 
             return result;
 
