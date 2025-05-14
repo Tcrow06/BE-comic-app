@@ -45,9 +45,11 @@ public class CommentServiceImpl implements ICommentService {
             throw new AppException(ErrorCode.USER_NOT_EXISTED);
         }
 
-        StoryEntity story = storyRepository.findById(commentRequest.getStoryId())
-                .orElseThrow(() -> new AppException(ErrorCode.STORY_NOT_EXITS));
-
+        StoryEntity story = storyRepository.findByCode(commentRequest.getStoryCode());
+//                .orElseThrow(() -> new AppException(ErrorCode.STORY_NOT_EXITS));
+        if(story == null){
+            new AppException(ErrorCode.STORY_NOT_EXITS);
+        }
         CommentEntity comment = commentMapper.toEntity(commentRequest);
         comment.setStory(story);
         comment.setUser(user);
@@ -63,15 +65,17 @@ public class CommentServiceImpl implements ICommentService {
     }
 
     @Override
-    public List<CommentResponse> getAllCommentsOfStory(String storyId) {
+    public List<CommentResponse> getAllCommentsOfStory(String storyCode) {
 
-        if (storyId == null) throw new RuntimeException("StoryId is null or invalid");
+        if (storyCode == null) throw new RuntimeException("StoryId is null or invalid");
 
         List<CommentResponse> results = new ArrayList<>();
 
-        StoryEntity story = storyRepository.findById(storyId)
-                .orElseThrow(() -> new AppException(ErrorCode.STORY_NOT_EXITS));
+        StoryEntity story = storyRepository.findByCode(storyCode);
 
+        if (story == null){
+            throw new AppException(ErrorCode.STORY_NOT_EXITS);
+        }
         List<CommentEntity> commentEntities = commentRepository.findAllByStory(story);
         for (CommentEntity commentEntity : commentEntities) {
             CommentResponse response = commentMapper.toResponse(commentEntity);
