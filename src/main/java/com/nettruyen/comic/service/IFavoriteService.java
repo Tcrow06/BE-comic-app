@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface IFavoriteService {
     FavoriteResponse addFavorite(FavoriteRequest request);
-
+    FavoriteResponse deleteFavorite(FavoriteRequest request);
+    FavoriteResponse checkFavorite(FavoriteRequest request);
     List<StoryResponse> getAllFavoritesByUsername(String username);
 }

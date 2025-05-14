@@ -1,5 +1,6 @@
 package com.nettruyen.comic.entity;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -34,6 +35,7 @@ public class UserEntity extends AbstractEntity {
     String email;
 
     @Column(name = "dob")
+    @Nullable
     LocalDate dob;
 
     @Column(name = "is_active")

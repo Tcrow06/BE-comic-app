@@ -19,4 +19,6 @@ public interface IStoryRepository extends JpaRepository<StoryEntity, String> {
 
     @Query("SELECT s FROM tbl_story s JOIN s.generates g WHERE g.code IN :generatesCode")
     List<StoryEntity> findAllByGeneratesCode(@RequestParam("generatesCode") List<String> generatesCode);
+    @Query("SELECT s FROM tbl_story s WHERE LOWER(s.title) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    List<StoryEntity> searchStory(@RequestParam("keyword") String keyword);
 }

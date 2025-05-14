@@ -42,16 +42,22 @@ public class AuthenticationController {
     ApiResponse<UserResponse> activeAccount(@RequestBody ActiveAccountRequest request) {
         return ApiResponse.<UserResponse>builder()
                 .code(200)
+                .message("Xác thực tài khoản thành công")
                 .result(authenticationService.activeAccount(request))
                 .build();
     }
-
-
     @PostMapping("/resend-otp")
     ApiResponse<ResendOtpResponse> resendOtp(@RequestBody ActiveAccountRequest request) {
         return ApiResponse.<ResendOtpResponse>builder()
                 .code(200)
                 .result(authenticationService.resendOtp(request))
+                .build();
+    }
+    @PostMapping("/resend-otp-username")
+    ApiResponse<ResendOtpResponse> resendOtpUsername(@RequestBody ActiveAccountRequest request) {
+        return ApiResponse.<ResendOtpResponse>builder()
+                .code(200)
+                .result(authenticationService.resendOtpUsername(request))
                 .build();
     }
 

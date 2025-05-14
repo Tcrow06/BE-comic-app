@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,7 @@ public class FavoriteServiceImpl implements IFavoriteService {
 
     StoryMapper storyMapper;
 
+    @Transactional
     @Override
     public FavoriteResponse addFavorite(FavoriteRequest request) {
         UserEntity user = userRepository.findByUsername(request.getUsername());
@@ -46,7 +48,7 @@ public class FavoriteServiceImpl implements IFavoriteService {
         if (story == null) throw new AppException(ErrorCode.STORY_NOT_EXITS);
 
         boolean checkExisted = favoriteRepository.existsByUserAndStory(user, story);
-        if (checkExisted) throw new RuntimeException("Story is already existed in favorite of user");
+        if (checkExisted) throw new AppException(ErrorCode.STORY_SAVED);
 
         FavoriteEntity favorite = FavoriteEntity.builder()
                 .user(user)
@@ -57,6 +59,43 @@ public class FavoriteServiceImpl implements IFavoriteService {
         return FavoriteResponse.builder()
                 .username(favorite.getUser().getUsername())
                 .storyCode(favorite.getStory().getCode())
+                .build();
+    }
+
+    @Transactional
+    @Override
+    public FavoriteResponse deleteFavorite(FavoriteRequest request) {
+        UserEntity user = userRepository.findByUsername(request.getUsername());
+        if (user == null) throw new AppException(ErrorCode.USER_NOT_EXISTED);
+
+        StoryEntity story = storyRepository.findByCode(request.getStoryCode());
+        if (story == null) throw new AppException(ErrorCode.STORY_NOT_EXITS);
+
+        FavoriteEntity favorite= favoriteRepository.findByUserAndStory(user,story);
+        if (favorite == null) throw new AppException(ErrorCode.FAVORITE_NOT_EXIST);
+        user.getFavorites().remove(favorite);
+        story.getFavorites().remove(favorite);
+        favoriteRepository.delete(favorite);
+
+        log.info("Deleting favorite with ID: {}", favorite.getId());
+//        favoriteRepository.delete(favorite);
+        log.info("Deleted favorite successfully.");
+//        favoriteRepository.delete(favorite);
+
+        return FavoriteResponse.builder()
+                .check(true)
+                .build();
+    }
+    @Override
+    public FavoriteResponse checkFavorite(FavoriteRequest request) {
+        UserEntity user = userRepository.findByUsername(request.getUsername());
+        if (user == null) throw new AppException(ErrorCode.USER_NOT_EXISTED);
+
+        StoryEntity story = storyRepository.findByCode(request.getStoryCode());
+        if (story == null) throw new AppException(ErrorCode.STORY_NOT_EXITS);
+        boolean check = favoriteRepository.existsByUserAndStory(user,story);
+        return FavoriteResponse.builder()
+                .check(check)
                 .build();
     }
 

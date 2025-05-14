@@ -28,6 +28,8 @@ public enum ErrorCode {
     STORY_ALREADY_EXITS(1111, "Story is existed in your database.", HttpStatus.BAD_REQUEST),
     STORY_NOT_EXITS(1112, "Story is not existed in your database.", HttpStatus.BAD_REQUEST),
 
+
+
     CHAPTER_ALREADY_EXITS(1113, "Chapter is existed in story of your database.", HttpStatus.BAD_REQUEST),
     CHAPTER_NOT_EXITS(1114, "Chapter is not existed in story of your database.", HttpStatus.BAD_REQUEST),
 
@@ -36,6 +38,8 @@ public enum ErrorCode {
 
     INVALID_EXPIRED_TOKEN(1005, "Token is invalid.", HttpStatus.BAD_REQUEST),
     UNVERIFIED(1005, "You must verify your account.", HttpStatus.BAD_REQUEST),
+    STORY_SAVED(1116, "Story is already existed in favorite of user", HttpStatus.BAD_REQUEST),
+    FAVORITE_NOT_EXIST(1117, "Favorite is not existed in your database.", HttpStatus.BAD_REQUEST),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode httpStatusCode) {

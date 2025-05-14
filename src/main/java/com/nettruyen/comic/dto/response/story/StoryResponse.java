@@ -37,4 +37,6 @@ public class StoryResponse {
     List<ChapterComponentResponse> chapters = new ArrayList<>();
 
     int totalChapter;
+
+    boolean isSave;
 }

@@ -11,4 +11,5 @@ import lombok.experimental.FieldDefaults;
 public class FavoriteResponse {
     String username;
     String storyCode;
+    boolean check;
 }

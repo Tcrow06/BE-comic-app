@@ -42,7 +42,7 @@ public class StoryEntity extends AbstractEntity {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "story")
     Set<ChapterEntity> chapters = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "story")
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY, mappedBy = "story")
     Set<FavoriteEntity> favorites = new HashSet<>();
 
     @ManyToMany(cascade = CascadeType.ALL)

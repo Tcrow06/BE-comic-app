@@ -27,15 +27,16 @@ public class CommentController {
     ApiResponse<CommentResponse> createComment(@RequestBody CommentRequest request) {
         return ApiResponse.<CommentResponse>builder()
                 .code(200)
+                .message("Đánh giá thành công")
                 .result(commentService.addComment(request))
                 .build();
     }
 
-    @GetMapping("api/comments/{story-id}")
-    ApiResponse<List<CommentResponse>> getAllComments(@PathVariable("story-id") String storyId) {
+    @GetMapping("api/comments/{story-code}")
+    ApiResponse<List<CommentResponse>> getAllComments(@PathVariable("story-code") String storyCode) {
         return ApiResponse.<List<CommentResponse>>builder()
                 .code(200)
-                .result(commentService.getAllCommentsOfStory(storyId))
+                .result(commentService.getAllCommentsOfStory(storyCode))
                 .build();
     }
 }

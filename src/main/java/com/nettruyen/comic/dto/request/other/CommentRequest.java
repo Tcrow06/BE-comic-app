@@ -15,5 +15,5 @@ public class CommentRequest {
 
     String username;
 
-    String storyId;
+    String storyCode;
 }

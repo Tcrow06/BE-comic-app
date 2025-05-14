@@ -18,5 +18,6 @@ public class AuthenticationResponse {
     String firstName;
     String lastName;
     String picture;
+    String username;
 
 }
