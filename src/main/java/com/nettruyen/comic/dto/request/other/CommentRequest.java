@@ -13,9 +13,7 @@ public class CommentRequest {
 
     String content;
 
-    String userId;
+    String username;
 
-    String chapterId;
-
-    String parentId;
+    String storyId;
 }

@@ -52,4 +52,7 @@ public class StoryEntity extends AbstractEntity {
             inverseJoinColumns = @JoinColumn(name = "generate_id")
     )
     Set<GenerateEntity> generates = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "story")
+    Set<CommentEntity> comments = new HashSet<>();
 }

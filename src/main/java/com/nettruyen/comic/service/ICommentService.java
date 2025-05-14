@@ -6,6 +6,9 @@ import com.nettruyen.comic.dto.response.other.CommentResponse;
 import java.util.List;
 
 public interface ICommentService {
-    CommentResponse createComment(CommentRequest commentRequest);
-    List<CommentResponse> getAllCommentForChapter(String chapterId);
+//    CommentResponse createComment(CommentRequest commentRequest);
+//    List<CommentResponse> getAllCommentForChapter(String chapterId);
+
+    CommentResponse addComment(CommentRequest commentRequest);
+    List<CommentResponse> getAllCommentsOfStory(String storyId);
 }
