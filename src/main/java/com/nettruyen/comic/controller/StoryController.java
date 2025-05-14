@@ -117,6 +117,14 @@ public class StoryController {
                 .message("Get completed")
                 .build();
     }
+    @GetMapping("/api/story/search-title")
+    ApiResponse<List<StoryResponse>> searchStory(@RequestParam("title") String code) {
+        return ApiResponse.<List<StoryResponse>>builder()
+                .code(200)
+                .result(storyService.searchStory(code))
+                .message("Get completed")
+                .build();
+    }
 
     // Tìm kiếm theo thể loại
     @GetMapping("/api/stories/search")

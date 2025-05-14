@@ -26,4 +26,5 @@ public interface IStoryService {
     int countChapterByStoryCode(String storyCode);
 
     List<StoryResponse> getAllStoryByGenerateCode(String generatesCode);
+    List<StoryResponse> searchStory(String keyword);
 }

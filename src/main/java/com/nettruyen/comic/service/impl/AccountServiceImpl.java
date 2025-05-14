@@ -23,6 +23,7 @@ public class AccountServiceImpl implements IAccountService {
     IRedisService redisService;
 
     @Override
+    @Async
     public void sendEmail(String toEmail, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(toEmail);
@@ -70,6 +71,7 @@ public class AccountServiceImpl implements IAccountService {
             // Thực chất email sẽ được gửi ở đây
             sendEmail(toEmail, subject, body);
             log.info("Email sent to {}", toEmail);
+            log.info("OTP: ", otpCode);
 
         } catch (Exception e) {
             log.error("Failed to send email to {}: {}", toEmail, e.getMessage());

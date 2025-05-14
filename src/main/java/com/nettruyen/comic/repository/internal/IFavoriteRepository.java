@@ -10,4 +10,6 @@ import java.util.List;
 public interface IFavoriteRepository extends JpaRepository<FavoriteEntity, String> {
     boolean existsByUserAndStory(UserEntity user, StoryEntity story);
     List<FavoriteEntity> findAllByUser(UserEntity user);
+
+    FavoriteEntity findByUserAndStory(UserEntity user, StoryEntity story);
 }

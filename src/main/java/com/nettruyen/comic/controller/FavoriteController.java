@@ -33,6 +33,30 @@ public class FavoriteController {
                 .result(favoriteService.addFavorite(request))
                 .build();
     }
+    @DeleteMapping
+    public ApiResponse<FavoriteResponse> deleteFavorite(
+            @RequestParam String username,
+            @RequestParam String code
+    ) {
+        FavoriteRequest request = new FavoriteRequest(username, code);
+        return ApiResponse.<FavoriteResponse>builder()
+                .code(200)
+                .message("Delete favorite completed")
+                .result(favoriteService.deleteFavorite(request))
+                .build();
+    }
+    @GetMapping("/check-save")
+    public ApiResponse<FavoriteResponse> checkFavorite(@RequestParam String username,
+                                                       @RequestParam String code) {
+
+        FavoriteRequest request = new FavoriteRequest(username, code);
+        return ApiResponse.<FavoriteResponse>builder()
+                .code(200)
+                .message("Check favorite completed")
+                .result(favoriteService.checkFavorite(request))
+                .build();
+    }
+
 
     // Lấy tất cả story mà user đã lưu
     @GetMapping()

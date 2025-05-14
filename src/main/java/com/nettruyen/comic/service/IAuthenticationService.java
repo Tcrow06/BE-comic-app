@@ -16,6 +16,7 @@ public interface IAuthenticationService {
     String logout(LogoutRequest request) throws ParseException, JOSEException;
 
     ResendOtpResponse resendOtp(ActiveAccountRequest request);
+    ResendOtpResponse resendOtpUsername(ActiveAccountRequest request);
 
     UserResponse activeAccount(ActiveAccountRequest request);
 

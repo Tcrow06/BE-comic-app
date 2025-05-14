@@ -29,10 +29,10 @@ public class UserCreationRequest {
     @NotEmpty(message = "Last name is not empty")
     String lastName;
 
-    @ValidEmail
+//    @ValidEmail
     String email;
 
-    @MinAge(value = 16, message = "You must be at least 16 years old to register")
+//    @MinAge(value = 16, message = "You must be at least 16 years old to register")
     LocalDate dob;
 
     @NotNull(message = "User active status must not be null")

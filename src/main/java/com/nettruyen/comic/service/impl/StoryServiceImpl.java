@@ -1,19 +1,16 @@
 package com.nettruyen.comic.service.impl;
 
+import com.nettruyen.comic.constant.RoleEnum;
 import com.nettruyen.comic.constant.StatusEnum;
 import com.nettruyen.comic.dto.request.story.StoryAddedRequest;
 import com.nettruyen.comic.dto.request.story.StoryUpdateRequest;
 import com.nettruyen.comic.dto.response.story.StoryResponse;
-import com.nettruyen.comic.entity.ChapterEntity;
-import com.nettruyen.comic.entity.GenerateEntity;
-import com.nettruyen.comic.entity.StoryEntity;
+import com.nettruyen.comic.dto.response.user.UserResponse;
+import com.nettruyen.comic.entity.*;
 import com.nettruyen.comic.exception.AppException;
 import com.nettruyen.comic.exception.ErrorCode;
 import com.nettruyen.comic.mapper.StoryMapper;
-import com.nettruyen.comic.repository.internal.IChapterRepository;
-import com.nettruyen.comic.repository.internal.IFavoriteRepository;
-import com.nettruyen.comic.repository.internal.IGenerateRepository;
-import com.nettruyen.comic.repository.internal.IStoryRepository;
+import com.nettruyen.comic.repository.internal.*;
 import com.nettruyen.comic.service.IFavoriteService;
 import com.nettruyen.comic.service.IStoryService;
 import com.nettruyen.comic.util.ConvertorUtil;
@@ -25,6 +22,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -39,6 +39,7 @@ public class StoryServiceImpl implements IStoryService {
     IGenerateRepository generateRepository;
     IStoryRepository storyRepository;
     IChapterRepository chapterRepository;
+    IUserRepository userRepository;
     IFavoriteRepository favoriteRepository;
     StoryMapper storyMapper;
 
@@ -131,6 +132,29 @@ public class StoryServiceImpl implements IStoryService {
                     .map(ConvertorUtil::convertToChapterComponentResponse)
                     .collect(Collectors.toList()));
             result.setTotalChapter(existedStory.getChapters().size());
+
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+            if (authentication != null
+                    && authentication.isAuthenticated()
+                    && !(authentication instanceof AnonymousAuthenticationToken)) {
+
+                String username = authentication.getName(); // Lúc này là username thật
+//            var context = SecurityContextHolder.getContext();
+//            String username = context.getAuthentication().getName();
+
+                try {
+                    UserEntity user = userRepository.findByUsername(username);
+                    if (user == null)
+                        result.setSave(false);
+                    else {
+                        boolean check = favoriteRepository.existsByUserAndStory(user, existedStory);
+                        result.setSave(check);
+                    }
+                } catch (Exception e) {
+                    result.setSave(false);
+                }
+            }
 
             return result;
 
@@ -226,6 +250,20 @@ public class StoryServiceImpl implements IStoryService {
         }
 
         return List.of();
+    }
+    @Override
+    public List<StoryResponse> searchStory(String keyword) {
+        List<StoryEntity> storyEntities = storyRepository.searchStory(keyword);
+        if (storyEntities == null) throw new AppException(ErrorCode.GENERATE_NOT_EXITS);
+
+        return storyEntities.stream().map(story -> {
+            StoryResponse storyResponse = storyMapper.toResponse(story);
+            storyResponse.setGenerates(story.getGenerates().stream()
+                    .map(GenerateEntity::getName)
+                    .collect(Collectors.toSet()));
+
+            return storyResponse;
+        }).toList();
     }
 
 

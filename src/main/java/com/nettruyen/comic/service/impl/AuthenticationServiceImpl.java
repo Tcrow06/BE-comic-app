@@ -33,6 +33,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -135,6 +136,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
                 .message("Login successful with " + user.getUsername())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
+                .username(user.getUsername())
                 .picture(user.getPicture())
                 .build();
     }
@@ -194,7 +196,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
                         + "If you did not request this, please ignore this email.\n\n"
                         + "Best regards,\n"
                         + "The Q.comic Team";
-                accountService.sendEmail(user.getEmail(), subject, body);
+                accountService.sendEmailAsync(user.getEmail(), subject, body);
 
                 log.info("Resend OTP successfully for user: {}", user.getEmail());
                 return ResendOtpResponse.builder()
@@ -209,7 +211,47 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         }
         return null;
     }
+    @Override
+    public ResendOtpResponse resendOtpUsername(ActiveAccountRequest request) {
 
+        // Luời đổi thuộc tính
+        UserEntity user = userRepository.findByUsername(request.getEmail());
+        if (user == null)
+            throw new AppException(ErrorCode.USER_NOT_EXISTED);
+        request.setEmail(user.getEmail());
+        // Check đã active chưa
+        if (user.getIsActive() == null || user.getIsActive() == 0) {
+            try {
+                // Tạo OTP mới và lưu vào Redis
+                String newOtpCode = OtpGenerator.generateOtp();
+                accountService.saveOtp(user.getEmail(), newOtpCode);
+
+
+                // Gửi email OTP mới
+                String subject = "🔑 Resend OTP for Your Q.comic Account";
+                String body = "Hello " + user.getUsername() + ",\n\n"
+                        + "We noticed that you requested a new OTP to activate your account. Please find your new OTP code below:\n\n"
+                        + "🔒 Your OTP Code: " + newOtpCode + "\n\n"
+                        + "This code is valid for the next 10 minutes. Please do not share this code with anyone.\n\n"
+                        + "If you did not request this, please ignore this email.\n\n"
+                        + "Best regards,\n"
+                        + "The Q.comic Team";
+
+                accountService.sendEmail(user.getEmail(), subject, body);
+
+                log.info("Resend OTP successfully for user: {}", user.getEmail());
+                return ResendOtpResponse.builder()
+                        .email(user.getEmail())
+                        .otpCode(newOtpCode)
+                        .build();
+
+            } catch (Exception e) {
+                log.error("Error while resending OTP for user: {}", user.getEmail(), e);
+                throw new AppException(ErrorCode.UNCATEGORIZED);
+            }
+        }
+        return null;
+    }
     @Override
     public UserResponse activeAccount(ActiveAccountRequest request) {
 
@@ -329,6 +371,10 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         return AuthenticationResponse.builder()
                 .accessToken(newToken)
                 .refreshToken(newRefreshToken)
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .username(user.getUsername())
+                .picture(user.getPicture())
                 .isActive(user.getIsActive())
                 .message(user.getUsername())
                 .build();
